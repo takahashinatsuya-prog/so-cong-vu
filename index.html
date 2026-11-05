@@ -6,7 +6,7 @@
 <title>Sổ Công Vụ · Xem nhanh</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@700;800&display=swap" media="print" onload="this.media='all'">
 <style>
 /* Giao diện cùng họ với Sổ Công Vụ (bảng màu "cham": thanh slate #2b4a62, viên thuốc hổ phách #f3cd6b, nền kem #edefe6), có bản tối. Mọi màu là biến; chữ trên nền đặc luôn ≥ 4,5:1. */
 :root{
@@ -206,12 +206,13 @@ details[open]>summary::after{content:"▴"}
   window.__xnQuen=function(){try{localStorage.removeItem(CFG);}catch(e){}location.reload();};
   function goi(ten,a,ok,bad){
     if(!C){if(bad)bad(new Error('App chưa có địa chỉ trang. Dán địa chỉ Xem nhanh (có ?k=...) ở ô phía trên'));return;}
+    var ac=window.AbortController?new AbortController():null,hg=ac?setTimeout(function(){ac.abort();},30000):0,sig=ac?ac.signal:undefined;          // mạng yếu: không chờ mãi, vẫn xem bản lưu
     var p=ten==='guiYeuCau'
-      ?fetch(C.u,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({s:a[0],k:C.k})})
-      :fetch(C.u+'?api='+(ten==='dsYeuCau'?'ds':'lay')+'&k='+encodeURIComponent(C.k),{cache:'no-store'});
-    p.then(function(r){if(!r.ok)throw new Error('Google trả lỗi '+r.status);return r.json();})
+      ?fetch(C.u,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({s:a[0],k:C.k}),signal:sig})
+      :fetch(C.u+'?api='+(ten==='dsYeuCau'?'ds':'lay')+'&k='+encodeURIComponent(C.k)+(ten==='layDuLieu'&&a[1]?'&rev='+encodeURIComponent(a[1]):''),{cache:'no-store',signal:sig});
+    p.then(function(r){clearTimeout(hg);return r;}).then(function(r){if(!r.ok)throw new Error('Google trả lỗi '+r.status);return r.json();})
      .then(function(j){if(ok)ok(j);})
-     .catch(function(e){if(bad)bad(new Error(navigator.onLine===false?'Điện thoại đang mất mạng':((e&&e.message)||'Không kết nối được Google')));});
+     .catch(function(e){if(bad)bad(new Error(navigator.onLine===false?'Điện thoại đang mất mạng':(e&&e.name==='AbortError'?'Mạng chậm, Google chưa trả lời sau 30 giây':(e&&e.message)||'Không kết nối được Google')));});
   }
   function mk(ok,bad){return new Proxy({},{get:function(t,n){
     if(n==='withSuccessHandler')return function(f){return mk(f,bad);};
@@ -319,11 +320,12 @@ function nap(){
   var seq=++napSeq;
   if(window.__XND){var r0=window.__XND;window.__XND=null;napOk(seq,r0);return;}          // 05/11/2026: số liệu gửi kèm trang (doGet), khỏi hỏi Google lượt thứ hai
   if(!S.first)$('freshTxt').textContent='Đang tải';
-  RUN.withSuccessHandler(function(r){napOk(seq,r);}).withFailureHandler(function(e){if(seq!==napSeq)return;S.first=false;S.loi='Không đọc được từ Google: '+((e&&e.message)||e)+'.'+(S.d?KEEP:'');draw();}).layDuLieu(window.__XNK||'');
+  RUN.withSuccessHandler(function(r){napOk(seq,r);}).withFailureHandler(function(e){if(seq!==napSeq)return;S.first=false;S.loi='Không đọc được từ Google: '+((e&&e.message)||e)+'.'+(S.d?KEEP:'');draw();}).layDuLieu(window.__XNK||'',S.d&&S.drive?S.drive:'');
 }
 function napOk(seq,r){
     if(seq!==napSeq)return;
     S.first=false;
+    if(r&&r.khongDoi&&S.d){S.srv=Date.parse(r.bayGio)||S.srv;S.cli=Date.now();S.loi='';veDau();return;}      // 05/11/2026: tệp trên Drive không đổi: chỉ cập nhật dòng thời gian, không vẽ lại (giữ nguyên chỗ đang cuộn)
     if(r&&r.loi){
       if(r.ma==='khong-co-tep'){S.d=null;S.loi=r.loi;cacheXoa();}                        // chủ đích: tắt / chưa gửi
       else S.loi=r.loi+(S.d?KEEP:'');
@@ -347,7 +349,7 @@ function tuoi(){ // số phút kể từ lúc Sổ dựng bản này; null = KH�
 function hoi(m){return m<1?'vừa xong':m<60?m+' phút trước':m<1440?Math.floor(m/60)+' giờ '+(m%60?m%60+' phút ':'')+'trước':Math.floor(m/1440)+' ngày trước';}
 
 /* ---- vẽ ---- */
-function draw(){
+function veDau(){          // phần đầu trang: chip thời gian, dải "đã cũ", dòng lỗi
   var d=S.d,m=tuoi(),mo=d&&m==null,cu=(m!=null&&m>STALE_MIN)||mo;
   var ld=!!(S.first&&d);      // lượt tải ĐẦU TIÊN chưa có phản hồi (đang xem bản lưu trên máy): chip trung tính, không báo "đã cũ" / lỗi khi chưa biết bản mới ra sao
   var fr=$('fresh');fr.className='fresh'+(ld?' load':d?(cu?' old':''):' none');
@@ -357,6 +359,10 @@ function draw(){
   if(mo)$('stale').textContent='Không xác định được thời điểm Sổ Công Vụ dựng bản này (tệp thiếu hoặc sai thời điểm). Số liệu hiển thị chưa xác minh thời gian, không nên coi là mới.';
   else if(cu)$('stale').textContent='Dữ liệu đã cũ: lần cập nhật cuối của Sổ Công Vụ lúc '+hm(d.taoLuc)+' ('+hoi(m)+'). Máy công ty có thể đang tắt hoặc Sổ đang đóng. Các số dưới đây là số của lần cập nhật cuối, không phải số hiện tại.';
   $('err').hidden=!S.loi;$('err').textContent=S.loi||'';
+}
+function draw(){
+  veDau();
+  var d=S.d;
   $('demo').hidden=!!RUN;$('demoBtn').hidden=!!RUN;
   var tabs=TABS.filter(function(t){return t[0]==='tt'||t[0]==='gui'||(d&&(t[0]==='tq'||(t[0]==='hang'?!!d.hang:t[0]==='po'?!!(d.po&&d.po.length):!!d.hd)));});      // "Tính thử" dùng được cả khi chưa có dữ liệu; mục PO chỉ hiện khi Sổ có PO (từ DX-93 PO soạn từ ngăn hợp đồng, nhiều khi chưa có PO nào: không hiện mục trống)
   if(!tabs.some(function(t){return t[0]===S.tab;}))S.tab=d?'tq':'tt';
