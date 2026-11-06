@@ -5,189 +5,212 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sổ Công Vụ · Xem nhanh</title>
 <style>
-/* Giao diện kiểu Messenger (05/11/2026, người dùng: "giao diện xấu ... font chữ mảnh, kiểu như Messenger"): nền trắng / đen, chữ hệ thống mảnh (400, nhấn tối đa 500), hàng phẳng có vòng tròn đầu dòng, thanh mục dưới đáy.
-   Không tải phông nào: Android dùng Roboto, iPhone San Francisco. Mọi màu là biến; chữ trên nền luôn >= 4,5:1. */
+/* Giao diện gọn (07/11/2026, người dùng: "font chữ xấu, bài trí cũng khó xem"): một màn hình thấy được nhiều hàng, số tồn nằm cột phải cho dễ dò, bấm vào hàng mới mở chi tiết.
+   Một phông Nunito, mảnh và bo tròn (người dùng: "font chữ mảnh tròn như Messenger, đừng nhiều kiểu font và to nhỏ lung tung"): CHỈ 3 cỡ chữ 15 / 13 / 22 px và 2 độ đậm 400 / 700: tên hàng, số và mục đang chọn đậm, còn lại nhạt hẳn, thêm cỡ mới phải có lý do. Nunito nạp trong shim.html (chỉ app); trang Apps Script dùng phông hệ thống. Mọi màu là biến; chữ trên nền luôn >= 4,5:1. */
 :root{
-  --bg:#000000; --surface:#000000; --raise:#242526; --field:#242526; --ink:#e4e6eb; --ink2:#b0b3b8; --ink3:#b0b3b8; --line:#303133;
-  --acc:#4599ff; --acc-ink:#000000; --focus:#4599ff;
-  --btn:#0866ff; --btn-ink:#ffffff; --on:#1a3a63; --on-ink:#a9d0ff;
-  --ok:#5fd591; --ok-bg:#12301f; --warn:#f5c95c; --warn-bg:#33290d; --bad:#ff8a8f; --bad-bg:#3b1619; --info:#a9d0ff; --info-bg:#1a3a63;
-  --badge-warn:#f5c95c; --badge-warn-ink:#2a2208; --badge-bad:#e41e3f; --badge-bad-ink:#ffffff;
+  --acc-on:#7fd6e6; --head:#000000; --head-ink:#ffffff; --head-ink2:#c3ced4; --head-chip:#232b2f; --head-warn:#f4cb72; --head-bad:#ff9d95; --head-ok:#7fe0ad;
+  --bg:#101517; --surface:#181e21; --raise:#232b2f; --field:#232b2f; --ink:#eaeef0; --ink2:#a6b1b8; --ink3:#a6b1b8; --line:#2b3439;
+  --acc:#6cc4d6; --acc-ink:#06242b; --focus:#6cc4d6;
+  --btn:#6cc4d6; --btn-ink:#06242b; --on:#eaeef0; --on-ink:#101517;
+  --ok:#63d49b; --ok-bg:#14301f; --warn:#f0c265; --warn-bg:#33290f; --bad:#ff948c; --bad-bg:#3a1a18; --info:#9bd3e0; --info-bg:#15303a;
   --shadow:0 4px 14px rgba(0,0,0,.5);
-  --f-body:Roboto,system-ui,-apple-system,"Segoe UI Variable Text","Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --f-body:Nunito,Roboto,system-ui,-apple-system,"Segoe UI Variable Text","Segoe UI","Helvetica Neue",Arial,sans-serif;
   --f-num:var(--f-body);
   color-scheme:dark;
 }
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
-  --bg:#ffffff; --surface:#ffffff; --raise:#f0f2f5; --field:#f0f2f5; --ink:#050505; --ink2:#606770; --ink3:#606770; --line:#e4e6eb;
-  --acc:#0866ff; --acc-ink:#ffffff; --focus:#0866ff;
-  --btn:#0866ff; --btn-ink:#ffffff; --on:#e2edff; --on-ink:#0650c4;
-  --ok:#0a6b39; --ok-bg:#e0f5e9; --warn:#7a5000; --warn-bg:#fff2cf; --bad:#b3122b; --bad-bg:#ffe7e9; --info:#0650c4; --info-bg:#e2edff;
-  --badge-warn:#f5c95c; --badge-warn-ink:#2a2208; --badge-bad:#e41e3f; --badge-bad-ink:#ffffff;
-  --shadow:0 4px 14px rgba(0,0,0,.18);
+  --acc-on:#7fd6e6; --head:#16232b; --head-ink:#ffffff; --head-ink2:#c3ced4; --head-chip:#2b3b45; --head-warn:#f4cb72; --head-bad:#ff9d95; --head-ok:#7fe0ad;
+  --bg:#eef3f5; --surface:#ffffff; --raise:#eaece8; --field:#eaece8; --ink:#182026; --ink2:#55616a; --ink3:#55616a; --line:#e1e4df;
+  --acc:#0e5f73; --acc-ink:#ffffff; --focus:#0e5f73;
+  --btn:#0e5f73; --btn-ink:#ffffff; --on:#182026; --on-ink:#ffffff;
+  --ok:#0f6b3c; --ok-bg:#e2f3e9; --warn:#7f5000; --warn-bg:#fbf0d5; --bad:#b3261e; --bad-bg:#fbe6e3; --info:#0e5f73; --info-bg:#dff0f4;
+  --shadow:0 4px 14px rgba(0,0,0,.16);
   color-scheme:light;}}
 :root[data-theme="light"]{
-  --bg:#ffffff; --surface:#ffffff; --raise:#f0f2f5; --field:#f0f2f5; --ink:#050505; --ink2:#606770; --ink3:#606770; --line:#e4e6eb;
-  --acc:#0866ff; --acc-ink:#ffffff; --focus:#0866ff;
-  --btn:#0866ff; --btn-ink:#ffffff; --on:#e2edff; --on-ink:#0650c4;
-  --ok:#0a6b39; --ok-bg:#e0f5e9; --warn:#7a5000; --warn-bg:#fff2cf; --bad:#b3122b; --bad-bg:#ffe7e9; --info:#0650c4; --info-bg:#e2edff;
-  --shadow:0 4px 14px rgba(0,0,0,.18);
+  --acc-on:#7fd6e6; --head:#16232b; --head-ink:#ffffff; --head-ink2:#c3ced4; --head-chip:#2b3b45; --head-warn:#f4cb72; --head-bad:#ff9d95; --head-ok:#7fe0ad;
+  --bg:#eef3f5; --surface:#ffffff; --raise:#eaece8; --field:#eaece8; --ink:#182026; --ink2:#55616a; --ink3:#55616a; --line:#e1e4df;
+  --acc:#0e5f73; --acc-ink:#ffffff; --focus:#0e5f73;
+  --btn:#0e5f73; --btn-ink:#ffffff; --on:#182026; --on-ink:#ffffff;
+  --ok:#0f6b3c; --ok-bg:#e2f3e9; --warn:#7f5000; --warn-bg:#fbf0d5; --bad:#b3261e; --bad-bg:#fbe6e3; --info:#0e5f73; --info-bg:#dff0f4;
+  --shadow:0 4px 14px rgba(0,0,0,.16);
   color-scheme:light;}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 .seg:empty,.chips:empty{display:none}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.4 var(--f-body);padding-inline:14px;padding-block:calc(12px + env(safe-area-inset-top,0px)) calc(84px + env(safe-area-inset-bottom,0px));-webkit-font-smoothing:antialiased}
-b,strong{font-weight:500}
-.wrap{max-width:680px;margin-inline:auto;display:flex;flex-direction:column;gap:12px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.4 var(--f-body);padding-inline:12px;padding-block:0 calc(72px + env(safe-area-inset-bottom,0px));-webkit-font-smoothing:antialiased}
+b,strong{font-weight:700}
+small{font-size:inherit}
+.wrap{max-width:680px;margin-inline:auto;display:flex;flex-direction:column;gap:10px}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .15s,color .15s}
 @media (prefers-reduced-motion:reduce){button{transition:none}}
 :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
 
-/* đầu trang: tên lớn, dưới là dòng trạng thái nhỏ như "Đang hoạt động" */
-.hero{display:block}
-.top{display:flex;flex-direction:column;align-items:flex-start;gap:0}
+/* đầu trang: dính trên cùng, gồm tên, giờ cập nhật và chọn công ty */
+.hero{position:sticky;top:0;z-index:4;margin-inline:-12px;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;background:var(--head);color:var(--head-ink);display:flex;flex-direction:column;gap:6px}
+.hero .chip{background:var(--head-chip);color:var(--head-ink)}
+.hero .chip[aria-pressed="true"]{background:var(--acc-on);color:var(--head)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .brand small{display:none}
-.brand h1{margin:0;font:500 26px/1.2 var(--f-body);letter-spacing:-.01em}
-.fresh{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:2px 0;border:0;background:none;color:var(--ink2);font-size:13px;font-weight:400;text-align:left}
-.fresh b{font-size:9px;line-height:1;font-weight:400;color:#31a24c}
-.fresh.old,.fresh.old b{color:var(--warn)}
-.fresh.none,.fresh.none b{color:var(--bad)}
-.fresh.load b{color:var(--ink2)}
-.demo{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;background:var(--raise);color:var(--ink2);font-size:13px}
-.demo b{color:var(--ink);font-size:12px}
-.stale{padding:10px 12px;border-radius:12px;background:var(--warn-bg);color:var(--warn);font-size:13.5px}
-.err{padding:10px 12px;border-radius:12px;background:var(--bad-bg);color:var(--bad);font-size:13.5px}
+.brand h1{margin:0;font:700 15px/1.2 var(--f-body);white-space:nowrap}
+.fresh{display:inline-flex;align-items:center;gap:5px;min-height:28px;min-width:0;padding:2px 0;border:0;background:none;color:var(--head-ink2);font-size:13px;text-align:right}
+.fresh b{font-size:8px;line-height:1;font-weight:400;color:var(--head-ok)}
+.fresh.old,.fresh.old b{color:var(--head-warn)}
+.fresh.none,.fresh.none b{color:var(--head-bad)}
+.fresh.load b{color:var(--head-ink2)}
+.demo{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;background:var(--raise);color:var(--ink2);font-size:13px}
+.demo b{color:var(--ink);font-size:13px}
+.stale{padding:7px 10px;border-radius:10px;background:var(--warn-bg);color:var(--warn);font-size:13px;line-height:1.35}
+.err{padding:8px 10px;border-radius:10px;background:var(--bad-bg);color:var(--bad);font-size:13px}
 
-/* thanh mục dưới đáy màn hình, như ứng dụng trên điện thoại */
-#tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;display:grid;grid-template-columns:repeat(var(--n,5),minmax(0,1fr));gap:0;padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid var(--line);border-radius:0}
-#tabs button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:0;min-height:52px;padding:4px 2px;border:0;background:none;color:var(--ink2);font-size:11px;font-weight:400;line-height:1.15;text-align:center;overflow-wrap:anywhere}
-#tabs button svg{flex:none;width:24px;height:24px}
-#tabs button[aria-pressed="true"]{color:var(--acc);font-weight:500}
+/* thanh mục dưới đáy màn hình */
+#tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;display:grid;grid-template-columns:repeat(var(--n,5),minmax(0,1fr));gap:0;padding:3px 4px calc(3px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line);border-radius:0}
+#tabs button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:0;min-height:50px;padding:3px 2px;border:0;background:none;color:var(--ink2);font-size:13px;font-weight:400;line-height:1.15;text-align:center;overflow-wrap:anywhere}
+#tabs button svg{flex:none;width:22px;height:22px}
+#tabs button[aria-pressed="true"]{color:var(--acc);font-weight:700}
 
 /* thanh loại yêu cầu (thẻ Gửi) */
-.seg{display:flex;flex-wrap:wrap;gap:4px;padding:3px;background:var(--raise);border-radius:999px}
-.seg button{flex:1 1 auto;min-width:0;padding:7px 10px;border:0;border-radius:999px;background:transparent;color:var(--ink2);font-weight:400}
-.seg button[aria-pressed="true"]{background:var(--btn);color:var(--btn-ink);font-weight:500}
+.seg{display:flex;flex-wrap:wrap;gap:3px;padding:3px;background:var(--raise);border-radius:10px}
+.seg button{flex:1 1 auto;min-width:0;padding:7px 10px;border:0;border-radius:8px;background:transparent;color:var(--ink2);font-weight:400}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:700}
 .seg.l4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
-.seg.l4 button{display:flex;align-items:center;justify-content:center;min-height:38px;padding:6px 4px;font-size:13.5px;line-height:1.2;text-align:center;overflow-wrap:anywhere}
+.seg.l4 button{display:flex;align-items:center;justify-content:center;min-height:36px;padding:6px 4px;font-size:13px;line-height:1.2;text-align:center;overflow-wrap:anywhere}
 @media (max-width:359px){.seg.l4{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* viên lọc: một hàng, vuốt ngang */
-.chips{display:flex;gap:8px;overflow-x:auto;margin-inline:-14px;padding-inline:14px;scrollbar-width:none}
+.chips{display:flex;gap:6px;overflow-x:auto;margin-inline:-12px;padding-inline:12px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
-.chip{flex:none;padding:7px 14px;border:0;border-radius:999px;background:var(--raise);color:var(--ink);font-size:14px;font-weight:400;white-space:nowrap}
-.chip[aria-pressed="true"]{background:var(--on);color:var(--on-ink);font-weight:500}
+.chip{flex:none;min-height:30px;padding:4px 13px;border:0;border-radius:999px;background:var(--raise);color:var(--ink);font-size:13px;font-weight:400;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--acc);color:var(--acc-ink);font-weight:700}
 
-/* vòng tròn đầu dòng */
-.av{flex:none;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--raise);color:var(--ink2);font-style:normal;font-size:19px;font-weight:400;text-transform:uppercase}
-.av svg{width:24px;height:24px}
-.av.s-ok{background:var(--ok-bg);color:var(--ok)} .av.s-warn{background:var(--warn-bg);color:var(--warn)} .av.s-bad{background:var(--bad-bg);color:var(--bad)}
-
-/* tổng quan: mỗi số liệu một hàng, số nằm trong huy hiệu như tin nhắn chưa đọc */
-.kpis{display:flex;flex-direction:column;gap:0;margin-inline:-6px}
-.kpi{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:8px 6px;border:0;border-radius:12px;background:none;color:var(--ink);text-align:left}
+/* tổng quan: việc cần chú ý là ô số lớn; số 0 gom thành một dòng nhỏ */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px}
+.kpi{display:flex;flex-direction:column;align-items:flex-start;gap:0;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);text-align:left}
 .kpi:active{background:var(--raise)}
-.kpi span{flex:1;min-width:0;font-size:16px;font-weight:400}
-.kpi b{flex:none;min-width:26px;padding:3px 8px;border-radius:999px;font-size:14px;font-weight:500;line-height:1.3;text-align:center;font-variant-numeric:tabular-nums}
-.kpi.warn b{background:var(--badge-warn);color:var(--badge-warn-ink)}
-.kpi.bad b{background:var(--badge-bad);color:var(--badge-bad-ink)}
-.kpi.zero{color:var(--ink2)} .kpi.zero b{padding-inline:0;font-weight:400;color:var(--ink2)}
-.kpi.st{cursor:default}.kpi.st:active{background:none}
+.kpi b{font-size:22px;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums}
+.kpi span{font-size:13px;color:var(--ink)}
+.kpi.warn{background:var(--warn-bg);border-color:transparent}
+.kpi.warn b{color:var(--warn)}
+.kpi.bad{background:var(--bad-bg);border-color:transparent}
+.kpi.bad b{color:var(--bad)}
+.kpi.st{cursor:default}
+.sec{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:14px 0 6px}
+.sec h2{margin:0;font-size:15px;font-weight:700;line-height:1.3}
+.sec button{padding:2px 0;border:0;background:none;color:var(--acc);font-size:13px}
 
 .find{display:flex;gap:10px;align-items:center}
-.find input{flex:1;min-width:0;min-height:40px;padding:8px 14px 8px 40px;border:0;border-radius:999px;background:var(--field) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%238a8d91' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") no-repeat 13px 50%;font-size:16px}
+.find input{flex:1;min-width:0;min-height:38px;padding:7px 12px 7px 36px;border:1px solid var(--line);border-radius:10px;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238a8d91' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") no-repeat 11px 50%;font-size:15px}
 .find input::placeholder{color:var(--ink3)}
 .find input::-webkit-search-cancel-button{-webkit-appearance:none}
-.count{font-size:12.5px;color:var(--ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.count{font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums;white-space:nowrap}
 
-/* danh sách phẳng: không khung thẻ, chỉ đường kẻ mảnh giữa các hàng */
-.list{display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin:0;padding:0;list-style:none}
-.it{position:relative;display:flex;flex-direction:column;gap:8px;padding:12px 0;border-bottom:1px solid var(--line);min-width:0}
+/* danh sách gọn: mỗi hàng 2-3 dòng, số nằm cột phải */
+.list{display:block;margin:0;padding:0;list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.it{position:relative;min-width:0;border-bottom:1px solid var(--line)}
+.it.h::before,.it.hd::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:transparent}
+.it.s-ok::before{background:var(--ok)} .it.s-warn::before{background:var(--warn)} .it.s-bad::before{background:var(--bad)}
+.it.s-warn .m2 b{color:var(--warn)} .it.s-bad .m2 b{color:var(--bad)}
 .it:last-child{border-bottom:0}
-.it.h{display:grid;grid-template-columns:48px minmax(0,1fr);column-gap:12px;row-gap:8px;content-visibility:auto;contain-intrinsic-size:auto 190px}
-.it.h>*{grid-column:2;min-width:0}
-.it.h>.av{grid-column:1;grid-row:1 / span 2}
+.it.h{content-visibility:auto;contain-intrinsic-size:auto 58px}
+.it.pad{display:flex;flex-direction:column;gap:6px;padding:10px 12px}
+.ro>summary{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;row-gap:1px;padding:9px 12px;cursor:pointer;list-style:none;-webkit-tap-highlight-color:transparent}
+.ro>summary::-webkit-details-marker{display:none}
+.ro>summary:active{background:var(--raise)}
+.ro .nm{grid-column:1;grid-row:1;min-width:0}
+.ro .m2{grid-column:2;grid-row:1;align-self:start;text-align:right;white-space:nowrap}
+.ro .m2 b{font-size:15px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.ro .m2 i{margin-inline:3px 0;font-style:normal;font-size:13px;color:var(--ink2)}
+.ro .m2 i.tr{margin-inline:0 3px}
+.ro .m2 small{display:none}
+.ro .tx{grid-column:1/-1;font-size:13px;color:var(--ink2)}
+.ro .tx small::after{content:": "}
+.ro .mi{grid-column:1;display:flex;gap:6px;min-width:0;font-size:13px;color:var(--ink2)}
+.ro .mi>*{min-width:0}
+.ro .m1{flex:none;order:-1;white-space:nowrap}
+.ro .m1 b{font-weight:400;font-variant-numeric:tabular-nums}
+.ro .mi .cd{flex:none;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ro .mi .fl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ro .mi .fl small{display:none}
+.sw{grid-column:2;justify-self:end;align-self:center;max-width:150px;margin-top:1px;padding:0 8px;border-radius:999px;font-size:13px;line-height:1.5;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink2)}
+.sw.ok{color:var(--ok);background:var(--ok-bg)} .sw.warn{color:var(--warn);background:var(--warn-bg)} .sw.bad{color:var(--bad);background:var(--bad-bg)} .sw.info{color:var(--info);background:var(--info-bg)}
+.ro .m2 .sw{display:inline-block;margin:0;padding:0;background:none;font-size:13px}
+.it .cd{font-size:13px;color:var(--ink2)}
+.it .tn{font-size:15px;font-weight:700;line-height:1.3;overflow-wrap:anywhere}
+
+.ct{display:flex;flex-direction:column;gap:8px;padding:2px 12px 12px}
 .it .l1{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
 .it .nm{min-width:0}
-.it .cd{font-size:12.5px;color:var(--ink2)}
-.it .tn{font-size:16px;font-weight:400;line-height:1.3;overflow-wrap:anywhere}
 .it .q{text-align:right;white-space:nowrap}
-.it .q b{font-size:18px;font-weight:500;font-variant-numeric:tabular-nums}
-.it .q small{display:block;color:var(--ink2);font-size:12.5px}
-.it.neg .q b{color:var(--bad)}
-.it .fl{display:grid;grid-template-columns:88px minmax(0,1fr);gap:6px;align-items:baseline;font-size:14px;color:var(--ink)}
-.it .fl small{font-size:12.5px;color:var(--ink2)}
-.it .fl span{overflow-wrap:anywhere}
-.mt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.mt>div{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 5px;padding:7px 12px 8px;border-radius:12px;background:var(--raise);min-width:0}
-.mt small{flex:0 0 100%;font-size:12px;color:var(--ink2)}
-.mt b{font-size:18px;font-weight:500;line-height:1.25;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.mt i{font-style:normal;font-size:13px;color:var(--ink2)}
-.it.neg .mt .m2 b{color:var(--bad)}
-.tags{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.pill{display:inline-flex;gap:6px;align-items:center;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:400;line-height:1.3;background:var(--raise);color:var(--ink2)}
+.it .q b{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.it .q small{display:block;color:var(--ink2);font-size:13px}
+.tags{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.pill{display:inline-flex;gap:6px;align-items:center;padding:2px 8px;border-radius:6px;font-size:13px;font-weight:400;line-height:1.35;background:var(--raise);color:var(--ink2)}
 .pill.ok{background:var(--ok-bg);color:var(--ok)} .pill.warn{background:var(--warn-bg);color:var(--warn)}
 .pill.bad{background:var(--bad-bg);color:var(--bad)} .pill.info{background:var(--info-bg);color:var(--info)}
 .pill.neu{background:var(--raise);color:var(--ink2)}
 .sub{font-size:13px;color:var(--ink2)}
-.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px;font-size:12.5px;color:var(--ink2)}
-.kv span{display:flex;flex-direction:column;gap:1px;min-width:0;overflow-wrap:anywhere}
-.kv b{color:var(--ink);font-size:14.5px;font-weight:500;line-height:1.3;font-variant-numeric:tabular-nums}
-details{border-top:1px solid var(--line);padding-top:8px}
-summary{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;color:var(--ink2);font-size:13px;list-style:none}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"▾";color:var(--ink2);font-size:13px}
-details[open]>summary::after{content:"▴"}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 14px;font-size:13px;color:var(--ink2)}
+.kv span{display:flex;flex-direction:column;gap:0;min-width:0;overflow-wrap:anywhere}
+.kv b{color:var(--ink);font-size:15px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.ct details,.it.pad details{border-top:1px solid var(--line);padding-top:8px}
+.ct summary,.it.pad summary,.gnote summary,.vein summary{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;color:var(--ink2);font-size:13px;list-style:none}
+.ct summary::-webkit-details-marker,.it.pad summary::-webkit-details-marker,.gnote summary::-webkit-details-marker,.vein summary::-webkit-details-marker{display:none}
+.ct summary::after,.it.pad summary::after,.gnote summary::after,.vein summary::after{content:"▾";color:var(--ink2);font-size:11px}
+.ct details[open]>summary::after,.it.pad details[open]>summary::after,.gnote[open]>summary::after,.vein[open]>summary::after{content:"▴"}
 .tb{width:100%;border-collapse:collapse;margin-top:6px;font-size:13px}
-.tb th{font-size:12px;font-weight:400;color:var(--ink2);text-align:left;padding:4px 12px 6px 0;white-space:nowrap}
-.tb td{padding:7px 12px 7px 0;border-top:1px solid var(--line);vertical-align:top;font-variant-numeric:tabular-nums}
+.tb th{font-size:13px;font-weight:400;color:var(--ink2);text-align:left;padding:3px 10px 5px 0;white-space:nowrap}
+.tb td{padding:6px 10px 6px 0;border-top:1px solid var(--line);vertical-align:top;font-variant-numeric:tabular-nums}
 .tb .r{text-align:right}
 .tb th:last-child,.tb td:last-child{padding-right:0}
 .tbw{overflow-x:auto}
-.note{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-radius:16px;background:var(--raise)}
-.note h2{margin:0;font-size:15px;font-weight:500;line-height:1.3}
-.note ul{margin:0;padding-left:18px;color:var(--ink2);font-size:14px;display:flex;flex-direction:column;gap:5px}
-.note li b{color:var(--ink);font-weight:500}
-.empty{padding:24px 12px;text-align:center;color:var(--ink2)}
-.empty small{display:block;margin-top:6px;font-size:12.5px}
-.foot{display:flex;flex-direction:column;gap:6px;color:var(--ink2);font-size:12px}
+.note{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.note h2{margin:0;font-size:13px;font-weight:700;line-height:1.3}
+.note ul{margin:0;padding-left:16px;color:var(--ink2);font-size:13px;display:flex;flex-direction:column;gap:4px}
+.note li b{color:var(--ink);font-weight:400}
+.empty{padding:22px 12px;text-align:center;color:var(--ink2)}
+.empty small{display:block;margin-top:6px;font-size:13px}
+.foot{display:flex;flex-direction:column;gap:6px;margin-top:6px;color:var(--ink2);font-size:13px}
 .foot button{align-self:flex-start;padding:6px 0;border:0;background:none;color:var(--acc);font-weight:400}
+.vein p{margin:6px 0 0}
 
 /* Tính thử và Gửi: biểu mẫu */
 .ttg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:end}
 #ttkq{margin-top:10px}
-#ttkq>.kv{padding:12px 14px;border-radius:16px;background:var(--raise)}
-.fld{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:400;color:var(--ink2);min-width:0}
+#ttkq>.kv{padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+.fld{display:flex;flex-direction:column;gap:3px;font-size:13px;font-weight:400;color:var(--ink2);min-width:0}
 .fld.w2{grid-column:1/-1}
-.fld input,.fld select{width:100%;min-width:0;min-height:44px;padding:9px 14px;border:0;border-radius:12px;background:var(--field);color:var(--ink);font-size:16px;font-weight:400}      /* 16 px: iPhone không tự phóng to trang khi chạm vào ô nhập */
+.fld input,.fld select{width:100%;min-width:0;min-height:42px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font-size:15px;font-weight:400}      /* 16 px: iPhone không tự phóng to trang khi chạm vào ô nhập */
 .fld input[type=date]{text-align:left}
 .fld input::placeholder,.fld textarea::placeholder{color:var(--ink3)}
 .fld input:focus,.fld select:focus,.fld textarea:focus{outline:2px solid var(--focus);outline-offset:0}
-.fld textarea{width:100%;min-width:0;min-height:84px;padding:10px 14px;border:0;border-radius:12px;background:var(--field);color:var(--ink);font:inherit;font-size:16px;resize:vertical}
+.fld textarea{width:100%;min-width:0;min-height:84px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;font-size:15px;resize:vertical}
 .ttr{display:flex;flex-direction:column;gap:8px;padding:10px 0 12px;margin-top:6px;border-bottom:1px solid var(--line)}
-.ttb{align-self:flex-start;min-height:38px;padding:7px 14px;border:0;border-radius:999px;background:var(--raise);color:var(--ink);font-size:14px;font-weight:400}
-.tth{margin:18px 0 0;font-size:15px;font-weight:500;line-height:1.2}
-.tt-tong{display:flex;flex-direction:column;gap:2px;margin-top:12px;padding:14px 16px;border-radius:16px;background:var(--on);color:var(--on-ink)}
+.ttb{align-self:flex-start;min-height:36px;padding:6px 12px;border:0;border-radius:8px;background:var(--raise);color:var(--ink);font-size:13px;font-weight:400}
+.tth{margin:16px 0 0;font-size:13px;font-weight:700;line-height:1.2}
+.tt-tong{display:flex;flex-direction:column;gap:2px;margin-top:12px;padding:12px 14px;border-radius:16px;background:var(--on);color:var(--on-ink)}
 .tt-tong span{font-size:13px}
-.tt-tong b{font-size:26px;font-weight:500;line-height:1.15;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.tt-tong b{font-size:22px;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .tt-tong small{font-size:13px}
-.guib{position:sticky;bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:2;width:100%;margin-top:14px;min-height:48px;padding:12px 20px;border:0;border-radius:999px;background:var(--btn);color:var(--btn-ink);font-weight:500;font-size:16px;box-shadow:var(--shadow)}      /* nút Gửi luôn nằm trên thanh mục, trong tầm ngón tay */
+.guib{position:sticky;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:2;width:100%;margin-top:14px;min-height:46px;padding:11px 20px;border:0;border-radius:10px;background:var(--btn);color:var(--btn-ink);font-weight:700;font-size:15px;box-shadow:var(--shadow)}      /* nút Gửi luôn nằm trên thanh mục, trong tầm ngón tay */
 .guib[disabled]{opacity:.55}
-.okb{padding:10px 12px;border-radius:12px;background:var(--ok-bg);color:var(--ok);margin-top:12px}
-.errb{padding:10px 12px;border-radius:12px;background:var(--bad-bg);color:var(--bad);margin-top:12px}
-.gh{font-size:12.5px;color:var(--ink2)}
+.okb{padding:9px 11px;border-radius:10px;background:var(--ok-bg);color:var(--ok);margin-top:12px}
+.errb{padding:9px 11px;border-radius:10px;background:var(--bad-bg);color:var(--bad);margin-top:12px}
+.gh{font-size:13px;color:var(--ink2)}
 .gh:empty{display:none}
-.gnote{margin:0;padding:10px 12px;border:0;border-radius:12px;background:var(--raise);color:var(--ink2);font-size:13px}
-.gnote summary{color:var(--ink);font-size:13px}
+.gnote{margin:0;padding:9px 11px;border:0;border-radius:10px;background:var(--raise);color:var(--ink2);font-size:13px}
+.gnote summary{color:var(--ink)}
 .gnote p{margin:8px 0 0}
 .gcard{display:flex;flex-direction:column;gap:10px;margin-top:12px}
 .gcard .ttg{margin-top:0}
+@supports (-webkit-touch-callout:none){.find input,.fld input,.fld select,.fld textarea{font-size:16px}}
 </style>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme:light)">
+<meta name="theme-color" content="#16232b" media="(prefers-color-scheme:light)">
 <meta name="theme-color" content="#000000" media="(prefers-color-scheme:dark)">
+<!-- Phông Nunito, 2 độ đậm: không chặn hiển thị (chưa tải xong thì dùng phông hệ thống); trình duyệt chỉ tải phần chữ cần dùng; sw.js giữ trong máy nên chỉ tải một lần -->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" media="print" onload="this.media='all'">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -243,18 +266,17 @@ details[open]>summary::after{content:"▴"}
       <div class="brand"><h1>Sổ Công Vụ</h1></div>
       <button type="button" class="fresh load" id="fresh" aria-live="polite" title="Bấm để tải lại"><b id="freshIc">…</b><span id="freshTxt">Đang tải số liệu…</span></button>
     </header>
+    <div class="chips" id="cos" role="group" aria-label="Công ty"></div>
     <nav class="seg" id="tabs" aria-label="Mục"></nav>
   </div>
   <div class="demo" id="demo" hidden><b>Bản mẫu</b><span>Số liệu giả để xem hình dạng (chạy ngoài Google). Trang thật đọc số của Sổ Công Vụ trên Drive của bạn.</span></div>
   <div class="stale" id="stale" hidden role="status"></div>
   <div class="err" id="err" hidden role="alert"></div>
 
-  <div class="chips" id="cos" role="group" aria-label="Công ty"></div>
   <section id="view" aria-live="polite"><div class="empty" id="loadmsg">Đang tải số liệu từ Google Drive…<br><small>Google mất vài giây mỗi lần mở; lần sau trang hiện ngay bản đã xem rồi mới cập nhật.</small></div></section>
 
   <footer class="foot">
-    <span id="meta"></span>
-    <span>Số liệu chỉ để xem. Thẻ Gửi chỉ gửi yêu cầu chờ duyệt ở máy công ty (không tự sửa Sổ); muốn sửa hoặc thêm bớt khác, đăng nhập máy tính công ty. Tồn tính riêng theo từng đơn vị (Kg, Cái, Lọ…), không cộng lẫn đơn vị khác nhau.</span>
+    <details class="vein"><summary>Về số liệu này</summary><p id="meta"></p><p>Số liệu chỉ để xem. Thẻ Gửi chỉ gửi yêu cầu chờ duyệt ở máy công ty (không tự sửa Sổ); muốn sửa hoặc thêm bớt khác, đăng nhập máy tính công ty. Tồn tính riêng theo từng đơn vị (Kg, Cái, Lọ…), không cộng lẫn đơn vị khác nhau.</p></details>
     <button type="button" id="demoBtn" hidden>Xem thử khi dữ liệu đã cũ</button>
   </footer>
 </main>
@@ -359,8 +381,8 @@ function veDau(){          // phần đầu trang: chip thời gian, dải "đã
   $('freshIc').textContent=ld?'…':d?(cu?'!':'●'):'×';
   $('freshTxt').textContent=ld?'Bản lưu '+hm(d.taoLuc)+' · đang cập nhật…':d?(mo?'Chưa rõ thời điểm của bản này':cu?'Đã cũ · '+hm(d.taoLuc):'Cập nhật '+hm(d.taoLuc)+' · '+hoi(m)):'Chưa có dữ liệu';
   $('stale').hidden=!cu||ld;
-  if(mo)$('stale').textContent='Không xác định được thời điểm Sổ Công Vụ dựng bản này (tệp thiếu hoặc sai thời điểm). Số liệu hiển thị chưa xác minh thời gian, không nên coi là mới.';
-  else if(cu)$('stale').textContent='Dữ liệu đã cũ: lần cập nhật cuối của Sổ Công Vụ lúc '+hm(d.taoLuc)+' ('+hoi(m)+'). Máy công ty có thể đang tắt hoặc Sổ đang đóng. Các số dưới đây là số của lần cập nhật cuối, không phải số hiện tại.';
+  if(mo)$('stale').textContent='Không xác định được thời điểm Sổ Công Vụ dựng bản này: không nên coi là số mới.';
+  else if(cu)$('stale').textContent='Số của lần cập nhật cuối, chưa phải số hiện tại.';
   $('err').hidden=!S.loi;$('err').textContent=S.loi||'';
 }
 function draw(){
@@ -383,11 +405,19 @@ function draw(){
 }
 var ICO=function(p){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';};
 var TAB_IC={tq:'<path d="M4 11l8-7 8 7"/><path d="M6 9.5V20h12V9.5"/>',hang:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/>',hd:'<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 12h5M10 16h5"/>',po:'<path d="M5 4h14v17l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 9h6M9 13h6"/>',tt:'<rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 7h6M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01"/>',gui:'<path d="M21 3L10 14"/><path d="M21 3l-6.5 18-4.5-7-7-4.5z"/>'};
-var KPI_IC={can:'<circle cx="9" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/><path d="M3 4h2l2.5 12h11L20 8H6"/>',het:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M9 10l6 6M15 10l-6 6"/>',am:'<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>',sap:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',hhet:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',hdq:'<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M12.5 11v4M12.5 18h.01"/>',nhap:'<path d="M4 20l1-4L16 5l3 3L8 19z"/>'};
-function kpi(k,l,v,cls){return '<button type="button" class="kpi '+(v?cls:'zero')+(k==='nhap'?' st':'')+'" data-go="'+k+'" aria-label="'+esc(l)+': '+v+'"><i class="av'+(v?(cls==='bad'?' s-bad':' s-warn'):'')+'">'+ICO(KPI_IC[k]||'')+'</i><span>'+esc(l)+'</span><b>'+NF0.format(v)+'</b></button>';}
+function kpi(k,l,v,cls){return '<button type="button" class="kpi '+cls+(k==='nhap'?' st':'')+'" data-go="'+k+'" aria-label="'+esc(l)+': '+v+'"><b>'+NF0.format(v)+'</b><span>'+esc(l)+'</span></button>';}
+/* xem trước trong Tổng quan: dùng đúng bộ lọc của thẻ Hàng hóa; Cần nhập xếp hàng sắp cạn trước (tồn / TB xuất tháng) */
+function tqDs(d,f,n){
+  var f0=S.f,q0=S.q;S.f=f;S.q='';var r=hangRows(d);S.f=f0;S.q=q0;
+  if(f==='can')r.sort(function(a,b){return (a.q/(a.r.tb||1e-3))-(b.q/(b.r.tb||1e-3));});
+  return {n:r.length,h:r.slice(0,n).map(function(x){return itemHtml(x.r,x.q,x.st,f==='sap');}).join('')};
+}
+function tqSec(d,f,tieuDe,go,n){var x=tqDs(d,f,n);return x.n?'<div class="sec"><h2>'+tieuDe+'</h2>'+(x.n>n?'<button type="button" data-go="'+go+'">Xem cả '+x.n+'</button>':'')+'</div><ul class="list">'+x.h+'</ul>':'';}
 function vTq(d){
   var t=(d.tq||{})[S.co]||{};
-  var h='<div class="kpis">'+kpi('can','Cần nhập',t.can||0,'warn')+kpi('het','Hết hàng',t.het||0,'bad')+kpi('am','Âm kho',t.am||0,'bad')+kpi('sap','Sắp hết hạn',t.hanSap||0,'warn')+kpi('hhet','Lô hết hạn',t.hanHet||0,'bad')+kpi('hdq','HĐ quá hạn',t.hdQua||0,'bad')+kpi('nhap','Phiếu nháp',t.nhap||0,'warn')+'</div>';
+  var ks=[['can','Cần nhập',t.can||0,'warn'],['het','Hết hàng',t.het||0,'bad'],['am','Âm kho',t.am||0,'bad'],['sap','Sắp hết hạn',t.hanSap||0,'warn'],['hhet','Lô hết hạn',t.hanHet||0,'bad'],['hdq','HĐ quá hạn',t.hdQua||0,'bad'],['nhap','Phiếu nháp',t.nhap||0,'warn']];
+  var co=ks.filter(function(k){return k[2];});
+  var h=co.length?'<div class="kpis">'+co.map(function(k){return kpi(k[0],k[1],k[2],k[3]);}).join('')+'</div>':'<div class="empty">Không có việc cần chú ý.</div>';
   var lines=[];
   (d.hang||[]).forEach(function(r){var q=S.co==='all'?r.q:(r.co[S.co]||0);var st=S.co==='all'?r.st:r.tc[S.co];
     /* 28/10/2026 (người dùng: "có âm đâu?"): phân biệt rõ hai kiểu âm cho khỏi tưởng hết hàng: (1) TỔNG tồn âm = âm thật theo sổ (thiếu phiếu nhập / điều chỉnh tồn);
@@ -398,7 +428,7 @@ function vTq(d){
   });
   (d.hd||[]).forEach(function(x){if(x.qua&&(S.co==='all'||x.cty===S.co))lines.push([2,'<b>'+esc(x.so)+'</b>'+(x.ncc?' ('+esc(x.ncc)+')':'')+': '+esc(x.w.filter(function(w){return w[1]==='bad';}).map(function(w){return w[0];}).join('; ')||'quá hạn')]);});
   lines.sort(function(a,b){return a[0]-b[0];});
-  return h+(lines.length?'<div class="note" style="margin-top:14px"><h2>Cần chú ý</h2><ul>'+lines.slice(0,8).map(function(l){return '<li>'+l[1]+'</li>';}).join('')+'</ul></div>':'');
+  return h+(lines.length?'<div class="note" style="margin-top:10px"><h2>Cần chú ý</h2><ul>'+lines.slice(0,8).map(function(l){return '<li>'+l[1]+'</li>';}).join('')+'</ul></div>':'')+tqSec(d,'can','Cần nhập','can',5)+tqSec(d,'sap','Sắp hết hạn','sap',5);
 }
 /* lô theo công ty: lọc theo phạm vi đang xem; phạm vi "tất cả" gồm lô của mọi công ty (mỗi dòng ghi công ty) */
 function lotsIn(r){return (r.lo||[]).filter(function(x){return S.co==='all'||x.c===S.co;});}
@@ -428,7 +458,7 @@ var HANG={k:'',n:0,rows:[]},HANG_BUOC=40,HANG_XA=1200;
 function hangThem(){
   var m=$('hangthem'),ul=$('hangds');if(!m||!ul||m.getBoundingClientRect().top>window.innerHeight+HANG_XA)return;
   var to=Math.min(HANG.n+HANG_BUOC,HANG.rows.length);
-  ul.insertAdjacentHTML('beforeend',HANG.rows.slice(HANG.n,to).map(function(x){return itemHtml(x.r,x.q,x.st);}).join(''));
+  ul.insertAdjacentHTML('beforeend',HANG.rows.slice(HANG.n,to).map(function(x){return itemHtml(x.r,x.q,x.st,S.f==='sap');}).join(''));
   HANG.n=to;if(to>=HANG.rows.length)m.remove();
 }
 window.addEventListener('scroll',hangThem,{passive:true});
@@ -441,10 +471,10 @@ function vHang(d){
   var key=S.co+'|'+S.f+'|'+S.q;
   if(HANG.k!==key){HANG.k=key;HANG.n=HANG_BUOC;}
   HANG.rows=rows;HANG.n=Math.max(HANG_BUOC,Math.min(HANG.n,rows.length));
-  var list=rows.length?rows.slice(0,HANG.n).map(function(x){return itemHtml(x.r,x.q,x.st);}).join(''):'<li class="empty">Không có mặt hàng nào khớp bộ lọc.</li>';
+  var list=rows.length?rows.slice(0,HANG.n).map(function(x){return itemHtml(x.r,x.q,x.st,S.f==='sap');}).join(''):'<li class="empty">Không có mặt hàng nào khớp bộ lọc.</li>';
   return bar+'<ul class="list two" id="hangds">'+list+'</ul>'+(rows.length>HANG.n?'<div id="hangthem" aria-hidden="true"></div>':'');
 }
-function itemHtml(r,q,st){
+function itemHtml(r,q,st,hanTruoc){
   var neg=q<0||st==='Âm kho';
   var per=S.co==='all'?Object.keys(r.co).map(function(c){return '<span>'+(c==='_'?'Chưa phân bổ':esc(c))+': <b>'+nf(r.co[c])+'</b></span>';}).join(' · '):'';
   /* âm theo sổ (tổng tồn < 0) khác với âm Ô CÔNG TY (tổng tồn còn dương, tồn nằm ở công ty khác): kiểu sau chỉ là chưa chia tách tồn, hiện màu vàng và nói rõ (người dùng 28/10: "có âm đâu?") */
@@ -458,13 +488,23 @@ function itemHtml(r,q,st){
   var all=S.co==='all',chua=clIn(r);
   var lo=vis.length?'<details><summary>'+vis.length+' lô'+(chua?' · '+nf(chua)+' '+esc(r.u)+' chưa khai lô':'')+'</summary><div class="tbw"><table class="tb"><thead><tr><th>Số lô</th>'+(all?'<th>Công ty</th>':'')+'<th>Hạn dùng</th><th class="r">Tồn</th></tr></thead><tbody>'+vis.map(function(l){return '<tr><td>'+esc(l.s||'(không số)')+'</td>'+(all?'<td>'+esc(coName(l.c))+'</td>':'')+'<td>'+(l.h?fdate(l.h):'—')+(l.tu===1?' <span class="pill info" title="Hạn do phần mềm tự tính từ tháng nhập + 1 năm, không phải hạn ghi trên bao bì">tự tính</span>':l.tu===2?' <span class="pill info" title="Lô gộp từ nhiều lần nhập: một phần có hạn do phần mềm tự tính, phần còn lại nhập tay hoặc chưa rõ nguồn">một phần tự tính</span>':'')+(l.tt==='het'?' <span class="pill bad">Hết hạn</span>':l.tt==='sap'?' <span class="pill warn">Sắp hết</span>':'')+'</td><td class="r">'+nf(l.q)+'</td></tr>';}).join('')+'</tbody></table></div></details>':(chua?'<span class="sub">'+nf(chua)+' '+esc(r.u)+' chưa khai lô</span>':'');
   var ex=[];if(r.dat>0&&!r.ngung)ex.push('Nên đặt thêm <b>'+nf(r.dat)+'</b> '+esc(r.u));if(r.dm)ex.push('Định mức '+nf(r.dm));if(r.nhap)ex.push('Nhập tháng này '+nf(r.nhap));if(r.xuat)ex.push('Xuất tháng này '+nf(r.xuat));
-  /* thứ tự đọc theo yêu cầu: tên hàng, tên hàng xuất, quy cách sản phẩm, TB xuất hàng tháng, tồn kho hiện tại kèm đơn vị tính (mã hàng và nhóm là dòng nhỏ phía trên) */
+  /* thứ tự đọc theo yêu cầu: tên hàng, tên hàng xuất, quy cách sản phẩm, TB xuất hàng tháng, tồn kho hiện tại kèm đơn vị tính. Trái: tên đậm, dòng phụ nhạt; phải: số đậm, một tình trạng. Mã / quy cách đã nằm trong tên thì không lặp */
   var tb=r.tb>0?nf(Math.round(r.tb*100)/100):'–',u=esc(r.u);
-  var mt='<div class="mt"><div class="m1"><small>TB xuất / tháng'+(all?'':' (mọi công ty)')+'</small><b>'+tb+'</b>'+(r.tb>0&&u?'<i>'+u+'</i>':'')+'</div><div class="m2"><small>Tồn kho hiện tại</small><b>'+nf(q)+'</b>'+(u?'<i>'+u+'</i>':'')+'</div></div>';
-  return '<li class="it h'+(neg?' neg':'')+(oAm||am?' s-warn':ST_CLS[st]?' s-'+ST_CLS[st]:'')+'"><i class="av'+(neg&&!oAm?' s-bad':oAm||am?' s-warn':ST_CLS[st]?' s-'+ST_CLS[st]:'')+'" aria-hidden="true">'+esc(String(r.t||r.m||'?').trim().charAt(0))+'</i><div class="nm"><div class="cd">'+esc(r.m)+(r.n?' · '+esc(r.n):'')+'</div><div class="tn">'+esc(r.t)+'</div></div>'+
-    (r.x?'<div class="fl"><small>Tên hàng xuất</small><span>'+esc(r.x)+'</span></div>':'')+(r.qc?'<div class="fl"><small>Quy cách</small><span>'+esc(r.qc)+'</span></div>':'')+mt+
-    '<div class="tags"><span class="pill '+(oAm?'warn':ST_CLS[st]||'')+'">'+(oAm?'Ô công ty âm':esc(st))+(r.ngung&&st!=='Âm kho'?' · ngừng đề xuất':'')+'</span>'+am+han+g+'</div>'+ghiAm+
-    (per?'<span class="sub">'+per+'</span>':'')+(ex.length?'<span class="sub">'+ex.join(' · ')+'</span>':'')+lo+'</li>';
+  var gon=function(s){return String(s||'').toLowerCase().replace(/[\s*×x_.-]/g,'');},ten=gon(r.t);
+  var moi=function(s){var g=gon(s);return g&&ten.indexOf(g)<0;};
+  var coMa=moi(r.m),coQc=r.qc&&moi(r.qc)&&gon(r.qc)!==gon(r.m);
+  var sw='',swc=ST_CLS[st]||'';
+  if(oAm||am){sw='Ô công ty âm';swc='warn';}
+  else if(hh==='het'){sw='Lô hết hạn';swc='bad';}
+  else if(hh==='sap'&&(hanTruoc||st==='Còn hàng')){sw='Hạn '+fdate(hmin);swc='warn';}
+  else if(st!=='Còn hàng'){sw=esc(st);if(r.ngung&&st!=='Âm kho')swc='';}
+  return '<li class="it h'+(neg?' neg':'')+(oAm||am?' s-warn':ST_CLS[st]?' s-'+ST_CLS[st]:'')+'"><details class="ro"><summary><div class="nm"><div class="tn">'+esc(r.t)+'</div></div>'+
+    (r.x?'<div class="fl tx"><small>Tên hàng xuất</small><span>'+esc(r.x)+'</span></div>':'')+
+    '<div class="mi">'+(coMa?'<span class="cd">'+esc(r.m)+'</span>':'')+(coQc?'<div class="fl"><small>Quy cách</small><span>'+esc(r.qc)+'</span></div>':'')+
+    '<div class="m1"><small>TB/tháng'+(all?'':' (mọi công ty)')+'</small> <b>'+tb+'</b></div></div>'+(sw?'<span class="sw '+swc+'">'+sw+'</span>':'')+
+    '<div class="m2"><small>Tồn kho hiện tại</small><b>'+nf(q)+'</b>'+(u?'<i>'+u+'</i>':'')+'</div></summary>'+
+    '<div class="ct">'+(am||han||g||r.ngung?'<div class="tags">'+(r.ngung&&st!=='Âm kho'?'<span class="pill">Ngừng đề xuất</span>':'')+am+han+g+'</div>':'')+ghiAm+
+    (per?'<span class="sub">'+per+'</span>':'')+(ex.length?'<span class="sub">'+ex.join(' · ')+'</span>':'')+lo+'</div></details></li>';
 }
 function vHd(d){
   var qs=S.q.trim().toLowerCase();
@@ -477,8 +517,11 @@ function vHd(d){
     var tien=x.ac!=null?'<div class="kv"><span>Giá trị <b>'+money(x.ac,x.nt)+'</b></span><span>Đã thanh toán <b>'+money(x.da,x.nt)+'</b></span><span>Còn phải trả <b>'+money(x.con,x.nt)+'</b></span>'+(x.han?'<span>Hạn thanh toán <b>'+fdate(x.han)+'</b></span>':'')+'</div>':(x.han?'<span class="sub">Hạn thanh toán '+fdate(x.han)+'</span>':'');
     var ls=x.ls&&x.ls.length?'<details><summary>'+x.ls.length+' dòng hàng · đã nhận '+x.nhan+'/'+x.sl+'</summary><div class="tbw"><table class="tb"><thead><tr><th>Hàng</th><th class="r">SL</th><th>Tình trạng</th><th>ETA</th></tr></thead><tbody>'+x.ls.map(function(l){return '<tr><td>'+esc(l.t)+(l.qua?' <span class="pill bad">Quá hạn</span>':'')+'</td><td class="r">'+nf(l.q)+(l.u?' '+esc(l.u):'')+'</td><td>'+esc(l.st)+'</td><td>'+(l.ve?'về '+fdate(l.ve):l.eta?fdate(l.eta):'—')+'</td></tr>';}).join('')+'</tbody></table></div></details>':'';
     var sc=x.qua?' s-bad':x.w.some(function(w){return w[1]==='warn'||w[1]==='bad';})?' s-warn':x.tt==='Đã thanh toán'&&x.hang==='Đã nhận hàng'?' s-ok':'';
-    return '<li class="it'+sc+'"><div class="l1"><div class="nm"><div class="cd">'+esc(x.cty||'Chưa chọn công ty')+(x.ky?' · ký '+fdate(x.ky):'')+'</div><div class="tn">'+esc(x.so)+(x.ncc?' · '+esc(x.ncc):'')+'</div></div></div>'+
-      '<div class="tags"><span class="pill '+(TT[x.tt]||'')+'">'+esc(x.tt)+'</span><span class="pill '+(HG[x.hang]||'')+'">'+esc(x.hang)+'</span>'+(x.qua?'<span class="pill bad">Quá hạn</span>':'')+'</div>'+tien+(w?'<div class="tags">'+w+'</div>':'')+ls+'</li>';
+    var con=x.con>0?'<i class="tr">còn</i><b>'+nf(x.con)+'</b><i>'+esc(x.nt||'')+'</i>':x.ac!=null?'<span class="sw ok">Đã trả đủ</span>':'';
+    var viec=x.qua?['Quá hạn','bad']:x.hang!=='Đã nhận hàng'?[x.hang,HG[x.hang]||'']:null;
+    return '<li class="it hd'+sc+'"><details class="ro"><summary><div class="nm"><div class="tn">'+esc(x.so)+'</div></div><div class="m2">'+con+'</div>'+
+      '<div class="mi">'+(x.ncc?'<div class="fl"><span>'+esc(x.ncc)+'</span></div>':'')+'</div>'+(viec?'<span class="sw '+viec[1]+'">'+esc(viec[0])+'</span>':'')+'</summary>'+
+      '<div class="ct"><span class="sub">'+esc(x.cty||'Chưa chọn công ty')+(x.ky?' · ký '+fdate(x.ky):'')+'</span><div class="tags"><span class="pill '+(TT[x.tt]||'')+'">'+esc(x.tt)+'</span><span class="pill '+(HG[x.hang]||'')+'">'+esc(x.hang)+'</span></div>'+tien+(w?'<div class="tags">'+w+'</div>':'')+ls+'</div></details></li>';
   }).join(''):'<li class="empty">Không có hợp đồng nào khớp.</li>';
   return bar+'<ul class="list">'+list+'</ul>';
 }
@@ -488,7 +531,7 @@ function vPo(d){
   var bar='<div class="find" style="margin-bottom:10px"><input id="q" type="search" placeholder="Tìm số PO hoặc nhà cung cấp" autocomplete="off" aria-label="Tìm PO" value="'+esc(S.q)+'"><span class="count">'+rows.length+' / '+(d.po||[]).length+'</span></div>';
   var list=rows.length?rows.map(function(x){
     var ls=x.ls&&x.ls.length?'<details><summary>'+x.n+' dòng hàng</summary><div class="tbw"><table class="tb"><thead><tr><th>Hàng</th><th class="r">SL</th>'+(x.tong!=null?'<th class="r">Đơn giá</th>':'')+'</tr></thead><tbody>'+x.ls.map(function(l){return '<tr><td>'+esc(l.t)+'</td><td class="r">'+nf(l.q)+'</td>'+(l.g!=null?'<td class="r">'+nf(l.g)+'</td>':'')+'</tr>';}).join('')+'</tbody></table></div></details>':'';
-    return '<li class="it"><div class="l1"><div class="nm"><div class="cd">'+esc(x.mua)+' · '+fdate(x.ngay)+'</div><div class="tn">'+esc(x.so)+' · '+esc(x.ncc)+'</div></div>'+(x.tong!=null?'<div class="q"><b>'+nf(x.tong)+'</b><small>'+esc(x.nt)+'</small></div>':'')+'</div><div class="tags"><span class="pill">'+x.n+' dòng hàng</span><span class="pill '+(x.xuat?'ok':'')+'">'+(x.xuat?'Đã xuất '+x.xuat+' lần':'Chưa xuất file')+'</span></div>'+ls+'</li>';
+    return '<li class="it pad"><div class="l1"><div class="nm"><div class="cd">'+esc(x.mua)+' · '+fdate(x.ngay)+'</div><div class="tn">'+esc(x.so)+' · '+esc(x.ncc)+'</div></div>'+(x.tong!=null?'<div class="q"><b>'+nf(x.tong)+'</b><small>'+esc(x.nt)+'</small></div>':'')+'</div><div class="tags"><span class="pill">'+x.n+' dòng hàng</span><span class="pill '+(x.xuat?'ok':'')+'">'+(x.xuat?'Đã xuất '+x.xuat+' lần':'Chưa xuất file')+'</span></div>'+ls+'</li>';
   }).join(''):'<li class="empty">Không có PO nào khớp.</li>';
   return bar+'<ul class="list">'+list+'</ul>';
 }
@@ -776,7 +819,7 @@ function guiDsHtml(){
   if(ds==null)return '<div class="sub">Đang tải…</div>';
   if(!ds.length)return '<div class="empty">Chưa có yêu cầu nào trong 14 ngày qua.</div>';
   return '<ul class="list">'+ds.map(function(x){var p=GT_PILL[x.tt]||['neu',x.tt||'?'];
-    return '<li class="it'+(p[0]==='neu'?'':' s-'+p[0])+'"><div class="l1"><div class="nm"><div class="cd">'+esc(hm(x.tao))+'</div><div class="tn">'+esc(x.tom||'')+'</div>'+(x.ghi&&x.tt!=='cho'?'<div class="sub">'+esc(x.ghi)+'</div>':'')+'</div><span class="pill '+p[0]+'">'+esc(p[1])+'</span></div></li>';}).join('')+'</ul>';
+    return '<li class="it pad'+(p[0]==='neu'?'':' s-'+p[0])+'"><div class="l1"><div class="nm"><div class="cd">'+esc(hm(x.tao))+'</div><div class="tn">'+esc(x.tom||'')+'</div>'+(x.ghi&&x.tt!=='cho'?'<div class="sub">'+esc(x.ghi)+'</div>':'')+'</div><span class="pill '+p[0]+'">'+esc(p[1])+'</span></div></li>';}).join('')+'</ul>';
 }
 function guiLoiChu(e,dau){
   var m=String((e&&e.message)||e||'');
