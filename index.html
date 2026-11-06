@@ -106,7 +106,7 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:backgro
 .list{display:grid;grid-template-columns:minmax(0,1fr);gap:0;margin:0;padding:0;list-style:none}
 .it{position:relative;display:flex;flex-direction:column;gap:8px;padding:12px 0;border-bottom:1px solid var(--line);min-width:0}
 .it:last-child{border-bottom:0}
-.it.h{display:grid;grid-template-columns:48px minmax(0,1fr);column-gap:12px;row-gap:8px}
+.it.h{display:grid;grid-template-columns:48px minmax(0,1fr);column-gap:12px;row-gap:8px;content-visibility:auto;contain-intrinsic-size:auto 190px}
 .it.h>*{grid-column:2;min-width:0}
 .it.h>.av{grid-column:1;grid-row:1 / span 2}
 .it .l1{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
@@ -424,12 +424,25 @@ function hangRows(d){
   return rows;
 }
 var FLT=[['','Tất cả'],['can','Cần nhập'],['het','Hết hàng'],['am','Âm kho'],['oam','Ô công ty âm'],['sap','Sắp hết hạn'],['hhet','Lô hết hạn']];      // "Âm kho" = tổng tồn âm (khớp ô Âm kho ở Tổng quan); "Ô công ty âm" = tổng còn dương nhưng một công ty ghi âm (chỉ ở phạm vi Tất cả)
+var HANG={k:'',n:0,rows:[]},HANG_BUOC=40,HANG_XA=1200;
+function hangThem(){
+  var m=$('hangthem'),ul=$('hangds');if(!m||!ul||m.getBoundingClientRect().top>window.innerHeight+HANG_XA)return;
+  var to=Math.min(HANG.n+HANG_BUOC,HANG.rows.length);
+  ul.insertAdjacentHTML('beforeend',HANG.rows.slice(HANG.n,to).map(function(x){return itemHtml(x.r,x.q,x.st);}).join(''));
+  HANG.n=to;if(to>=HANG.rows.length)m.remove();
+}
+window.addEventListener('scroll',hangThem,{passive:true});
 function vHang(d){
   var rows=hangRows(d);
   var bar='<div class="chips" role="group" aria-label="Lọc">'+FLT.filter(function(f){return f[0]!=='oam'||S.co==='all';}).map(function(f){return '<button type="button" class="chip" data-f="'+f[0]+'" aria-pressed="'+(S.f===f[0])+'">'+f[1]+'</button>';}).join('')+'</div>'+
     '<div class="find" style="margin-block:10px"><input id="q" type="search" placeholder="Tìm mã, tên hàng, quy cách" autocomplete="off" aria-label="Tìm mã, tên hàng, tên hàng xuất hoặc quy cách" value="'+esc(S.q)+'"><span class="count">'+rows.length+' / '+(d.hang||[]).length+'</span></div>';
-  var list=rows.length?rows.slice(0,300).map(function(x){return itemHtml(x.r,x.q,x.st);}).join(''):'<li class="empty">Không có mặt hàng nào khớp bộ lọc.</li>';
-  return bar+'<ul class="list two">'+list+(rows.length>300?'<li class="empty">Còn '+(rows.length-300)+' mặt hàng nữa: gõ vào ô tìm để thu hẹp.</li>':'')+'</ul>';
+  /* DX-131 (06/11/2026, người dùng: "cần mượt mà hơn"): chỉ dựng HANG_BUOC thẻ đầu, cuộn gần tới đâu dựng thêm tới đó (trước đây dựng một lượt 300 thẻ, ~6.800 phần tử, và 51 hàng phải gõ tìm mới thấy).
+     Đổi bộ lọc thì dựng lại từ đầu; số liệu mới về thì giữ nguyên số thẻ đã dựng để không nhảy chỗ đang đọc. */
+  var key=S.co+'|'+S.f+'|'+S.q;
+  if(HANG.k!==key){HANG.k=key;HANG.n=HANG_BUOC;}
+  HANG.rows=rows;HANG.n=Math.max(HANG_BUOC,Math.min(HANG.n,rows.length));
+  var list=rows.length?rows.slice(0,HANG.n).map(function(x){return itemHtml(x.r,x.q,x.st);}).join(''):'<li class="empty">Không có mặt hàng nào khớp bộ lọc.</li>';
+  return bar+'<ul class="list two" id="hangds">'+list+'</ul>'+(rows.length>HANG.n?'<div id="hangthem" aria-hidden="true"></div>':'');
 }
 function itemHtml(r,q,st){
   var neg=q<0||st==='Âm kho';
@@ -857,7 +870,7 @@ document.addEventListener('click',function(e){
   else if(t.dataset.co!==undefined){S.co=t.dataset.co;if(S.f==='oam'&&S.co!=='all')S.f='';}
   else if(t.dataset.f!==undefined){S.f=t.dataset.f;}
   else if(t.dataset.go){var g=t.dataset.go;if(g==='hdq'){S.tab='hd';S.q='';}else if(g==='nhap'){return;}else{S.tab='hang';S.f=({can:'can',het:'het',am:'am',sap:'sap',hhet:'hhet'})[g]||'';S.q='';}}
-  draw();window.scrollTo(0,0);
+  HANG.k='';draw();window.scrollTo(0,0);
 });
 document.addEventListener('change',function(e){if(guiSuKien(e))return;ttSuKien(e);});
 document.addEventListener('input',function(e){
