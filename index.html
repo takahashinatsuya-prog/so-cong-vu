@@ -437,6 +437,20 @@ function coName(c){return c==='_'?'Chưa phân bổ':c;}
 function amCty(r){return r.am.map(function(c){return 'ô '+esc(coName(c))+' ghi âm '+nf(-r.co[c]);}).join('; ');}      // các ô công ty đang âm của một mặt hàng
 function coList(r,tt){var a=[];lotsIn(r).forEach(function(x){if(x.tt===tt&&a.indexOf(x.c)<0)a.push(x.c);});return a.map(function(c){return esc(coName(c));}).join(', ');}
 function clIn(r){var c=r.cl||{},t=0;Object.keys(c).forEach(function(k){if(S.co==='all'||k===S.co)t+=c[k];});return t;}
+/* DX-141 (09/11/2026, rà soát đêm vòng 4 mục D): ô tìm hiểu chữ không dấu như ô tìm của Sổ. Chép nguyên văn qLow / qFold / qIn / qHas từ app/core.js (DX-117):
+   gõ không dấu khớp cả chữ có dấu ("luoi" ra "Lưỡi"), gõ có dấu thì dấu phải khớp ("lò" không ra "lọc"). Trước đây dùng indexOf nên "luoi" ra 0 hàng. */
+const qLow=s=>String(s==null?'':s).normalize('NFC').toLowerCase();
+const qFold=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d');
+function qIn(h,nh,t){
+  const nt=qFold(t);if(!nt)return true;
+  if(nh.length!==h.length||nt.length!==t.length)return nh.includes(nt)&&(nt===t||h.includes(t));
+  for(let i=nh.indexOf(nt);i>=0;i=nh.indexOf(nt,i+1)){let ok=true;for(let j=0;j<t.length;j++){if(t[j]!==nt[j]&&h[i+j]!==t[j]){ok=false;break;}}if(ok)return true;}
+  return false;
+}
+function qHas(hay,query){
+  const q=qLow(query).replace(/\s+/g,' ').trim();if(!q)return true;
+  const h=qLow(hay);return qIn(h,qFold(h),q);
+}
 function hangRows(d){
   var qs=S.q.trim().toLowerCase(),rows=[];
   (d.hang||[]).forEach(function(r){
@@ -444,7 +458,7 @@ function hangRows(d){
     if(S.co!=='all'&&!q)return;                          // theo công ty: chỉ hàng có tồn (hoặc âm) ở công ty đó, đúng như bảng tồn kho
     var ok=!S.f||(S.f==='can'&&st==='Cần nhập'&&!r.ngung)||(S.f==='het'&&st==='Hết hàng'&&!r.ngung)||(S.f==='am'&&st==='Âm kho')||(S.f==='oam'&&S.co==='all'&&r.am&&r.am.length&&r.q>=0)||(S.f==='sap'&&hasLot(r,'sap'))||(S.f==='hhet'&&hasLot(r,'het'));
     if(S.f==='nhap')ok=false;
-    if(ok&&qs&&(r.m+' '+r.t+' '+(r.x||'')+' '+(r.qc||'')).toLowerCase().indexOf(qs)<0)ok=false;
+    if(ok&&qs&&!qHas(r.m+' '+r.t+' '+(r.x||'')+' '+(r.qc||''),qs))ok=false;
     if(ok)rows.push({r:r,q:q,st:st});
   });
   var ord={'Âm kho':0,'Cần nhập':2,'Hết hàng':4,'Còn hàng':5};
@@ -508,7 +522,7 @@ function itemHtml(r,q,st,hanTruoc){
 }
 function vHd(d){
   var qs=S.q.trim().toLowerCase();
-  var rows=(d.hd||[]).filter(function(x){return (S.co==='all'||x.cty===S.co)&&(!qs||(x.so+' '+x.ncc).toLowerCase().indexOf(qs)>=0);});
+  var rows=(d.hd||[]).filter(function(x){return (S.co==='all'||x.cty===S.co)&&(!qs||qHas(x.so+' '+x.ncc,qs));});
   rows.sort(function(a,b){return (b.qua?1:0)-(a.qua?1:0)||(a.ky<b.ky?1:-1);});
   var bar='<div class="find" style="margin-bottom:10px"><input id="q" type="search" placeholder="Tìm số HĐ hoặc nhà cung cấp" autocomplete="off" aria-label="Tìm hợp đồng" value="'+esc(S.q)+'"><span class="count">'+rows.length+' / '+(d.hd||[]).length+'</span></div>';
   var TT={'Đã thanh toán':'ok','Đã TT lần 1':'warn','Chờ thanh toán':'bad','Chưa có giá trị':''},HG={'Đã nhận hàng':'ok','Nhận một phần':'warn','Đã vận chuyển':'info','Đang sản xuất':'warn','Chờ xác nhận':'','Chưa có chi tiết':''};
@@ -527,7 +541,7 @@ function vHd(d){
 }
 function vPo(d){
   var qs=S.q.trim().toLowerCase();
-  var rows=(d.po||[]).filter(function(x){return (S.co==='all'||x.mua===S.co)&&(!qs||(x.so+' '+x.ncc).toLowerCase().indexOf(qs)>=0);});
+  var rows=(d.po||[]).filter(function(x){return (S.co==='all'||x.mua===S.co)&&(!qs||qHas(x.so+' '+x.ncc,qs));});
   var bar='<div class="find" style="margin-bottom:10px"><input id="q" type="search" placeholder="Tìm số PO hoặc nhà cung cấp" autocomplete="off" aria-label="Tìm PO" value="'+esc(S.q)+'"><span class="count">'+rows.length+' / '+(d.po||[]).length+'</span></div>';
   var list=rows.length?rows.map(function(x){
     var ls=x.ls&&x.ls.length?'<details><summary>'+x.n+' dòng hàng</summary><div class="tbw"><table class="tb"><thead><tr><th>Hàng</th><th class="r">SL</th>'+(x.tong!=null?'<th class="r">Đơn giá</th>':'')+'</tr></thead><tbody>'+x.ls.map(function(l){return '<tr><td>'+esc(l.t)+'</td><td class="r">'+nf(l.q)+'</td>'+(l.g!=null?'<td class="r">'+nf(l.g)+'</td>':'')+'</tr>';}).join('')+'</tbody></table></div></details>':'';
@@ -806,7 +820,11 @@ function vGui(){
   return h;
 }
 function guiKqHtml(){return G.loi?'<div class="errb" role="alert">'+esc(G.loi)+'</div>':G.kq?'<div class="okb" role="status">'+esc(G.kq)+'</div>':'';}
+/* DX-141 (rà soát đêm vòng 4 mục F): ngày mặc định của thẻ Gửi luôn là HÔM NAY cho tới khi người dùng tự đổi (G.ngayTay). Trước đây chỉ tính một lần lúc mở trang,
+   app để chạy nền qua đêm thì hôm sau vẫn gửi ngày hôm qua. */
+function guiNgayMoi(){if(G.ngayTay)return;const n=guiNgay();if(G.ngay!==n){G.ngay=n;const e=document.querySelector('[data-gf="ngay"]');if(e)e.value=n;}}
 function guiVe(){
+  guiNgayMoi();
   $('view').innerHTML=vGui();
   G.dong.forEach(function(x,i){guiGoiY(i);});
 }
@@ -834,6 +852,7 @@ function guiDs(){
 function guiSo(s){var v=vnNum(String(s==null?'':s));return (v===null||v!==v)?null:v;}
 /* gom + kiểm tra phía trang; trả {o} hoặc {loi} */
 function guiGom(){
+  guiNgayMoi();
   var l=G.loai,o={app:'so-cong-vu-yeu-cau',v:1,id:G.id||(G.id=guiId()),tao:new Date().toISOString(),loai:l},i;
   var t=function(s){return String(s==null?'':s).trim();};
   if(l==='ghichu'){
@@ -879,7 +898,7 @@ function guiGuiDi(){
     G.dangGui=false;
     if(res&&res.ok){
       G.kq='Đã gửi ('+guiTom(o)+'). Sổ trên máy công ty sẽ nhận trong vài chục giây khi đang mở; bạn bấm Duyệt ở đó thì mới ghi.'+(res.lai?' (Yêu cầu này đã gửi trước đó, không tạo thêm.)':'');
-      G.id='';G.dong=[guiDong()];G.td='';G.nd='';G.han='';G.m='';
+      G.id='';G.dong=[guiDong()];G.td='';G.nd='';G.han='';G.m='';G.ngayTay=false;
       if(!RUN)G.demoDs.unshift({id:o.id,tao:o.tao,tom:guiTom(o),tt:'cho'});else G.ds=null;
     }else G.loi=(res&&res.loi)||'Chưa gửi được.';
     guiVe();
@@ -890,7 +909,7 @@ function guiGuiDi(){
 }
 function guiSuKien(e){
   var t=e.target;if(!t||!t.dataset)return false;
-  if(t.dataset.gf!==undefined){G[t.dataset.gf]=t.value;return true;}
+  if(t.dataset.gf!==undefined){G[t.dataset.gf]=t.value;if(t.dataset.gf==='ngay')G.ngayTay=true;return true;}
   if(t.dataset.gl!==undefined){var i=+t.dataset.i;if(G.dong[i]){G.dong[i][t.dataset.gl]=t.value;if(t.dataset.gl==='m'&&e.type==='change')guiGoiY(i);}return true;}
   return false;
 }
@@ -920,7 +939,7 @@ document.addEventListener('input',function(e){
   if(guiSuKien(e)||ttSuKien(e))return;
   if(e.target.id!=='q')return;S.q=e.target.value;var p=e.target.selectionStart;draw();var n=$('q');if(n){n.focus();try{n.setSelectionRange(p,p);}catch(x){}}
 });
-document.addEventListener('visibilitychange',function(){if(!document.hidden)nap();});
+document.addEventListener('visibilitychange',function(){if(!document.hidden){guiNgayMoi();nap();}});
 setInterval(function(){if(!document.hidden){if(RUN)nap();else draw();}},60000);
 setInterval(function(){if(!document.hidden&&S.tab==='gui'&&RUN)guiDs();},30000);   // thẻ Gửi: làm mới trạng thái yêu cầu mỗi 30 giây   // tải lại mỗi phút khi đang xem
 $('fresh').addEventListener('click',nap);
