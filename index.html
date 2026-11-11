@@ -164,6 +164,8 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:backgro
 .tb .r{text-align:right}
 .tb th:last-child,.tb td:last-child{padding-right:0}
 .tbw{overflow-x:auto}
+.tb.bd td{font-size:13px}.tb.bd .g{color:var(--ink2);white-space:normal;word-break:break-word}.tb.bd .g b{color:var(--ink);font-weight:700}.tb.bd .n{color:var(--ok);white-space:nowrap}.tb.bd .x{color:var(--bad);white-space:nowrap}.tb.bd .dc{font-style:italic}
+.bao{margin-top:8px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:13px;font-weight:700}
 .note{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
 .note h2{margin:0;font-size:13px;font-weight:700;line-height:1.3}
 .note ul{margin:0;padding-left:16px;color:var(--ink2);font-size:13px;display:flex;flex-direction:column;gap:4px}
@@ -302,7 +304,7 @@ function money(v,nt){return v==null?'':NF.format(v)+(nt?' '+esc(nt):'');}
 var KEEP=' Đang xem bản lần trước (số liệu có thể đã cũ).';
 /* LƯỢC ĐỒ v1: cùng bảng với app\xem_nhanh.js (người gửi) và xem_nhanh_cau.ps1 (cầu nối); kiem_thu\xem_nhanh_cau_thu.ps1 kiểm ba bản giống hệt.
    S chuỗi, N số hữu hạn, N0 số hữu hạn hoặc null, B đúng / sai; obj: f = trường được phép (khóa lạ bị chặn), req = bắt buộc; arr / map: of = kiểu phần tử. */
-var SCHEMA=/*SCHEMA*/{"t":"obj","req":["app","v","taoLuc","rev","ngay","cty","tq"],"f":{"app":"S","v":"N","taoLuc":"S","moLuc":"S","luuLuc":"S","ngay":"S","rev":"S","ten":"S","cty":{"t":"arr","of":"S"},"muc":{"t":"obj","f":{"hang":"B","po":"B","gia":"B"}},"tq":{"t":"map","of":{"t":"map","of":"N"}},"hang":{"t":"arr","of":{"t":"obj","req":["m","t","q","co","tc"],"f":{"m":"S","t":"S","n":"S","u":"S","dm":"N0","q":"N","st":"S","co":{"t":"map","of":"N"},"tc":{"t":"map","of":"S"},"am":{"t":"arr","of":"S"},"dat":"N","ngung":"B","ql":"B","hh":"S","hm":"S","lo":{"t":"arr","of":{"t":"obj","req":["c","q"],"f":{"c":"S","s":"S","h":"S","n":"S","q":"N","tt":"S","tu":"N"}}},"cl":{"t":"map","of":"N"},"hc":{"t":"map","of":"S"},"nhap":"N","xuat":"N","x":"S","qc":"S","tb":"N","g":{"t":"obj","req":["v"],"f":{"v":"N","nguon":"S","nt":"S"}}}}},"hd":{"t":"arr","of":{"t":"obj","req":["so","ls","w"],"f":{"so":"S","cty":"S","ncc":"S","nt":"S","ky":"S","han":"S","tt":"S","hang":"S","qua":"B","xong":"S","eta":"S","sl":"N","nhan":"N","w":{"t":"arr","of":{"t":"arr","of":"S"}},"ls":{"t":"arr","of":{"t":"obj","f":{"t":"S","q":"N","u":"S","st":"S","etd":"S","eta":"S","ve":"S","qua":"B","g":"N"}}},"ac":"N","da":"N","con":"N"}}},"po":{"t":"arr","of":{"t":"obj","req":["so","ls"],"f":{"so":"S","ngay":"S","mua":"S","ncc":"S","nt":"S","n":"N","xuat":"N","ls":{"t":"arr","of":{"t":"obj","f":{"t":"S","q":"N","g":"N"}}},"tong":"N"}}}}}/*END*/;
+var SCHEMA=/*SCHEMA*/{"t":"obj","req":["app","v","taoLuc","rev","ngay","cty","tq"],"f":{"app":"S","v":"N","taoLuc":"S","moLuc":"S","luuLuc":"S","ngay":"S","rev":"S","ten":"S","cty":{"t":"arr","of":"S"},"muc":{"t":"obj","f":{"hang":"B","po":"B","gia":"B"}},"tq":{"t":"map","of":{"t":"map","of":"N"}},"hang":{"t":"arr","of":{"t":"obj","req":["m","t","q","co","tc"],"f":{"m":"S","t":"S","n":"S","u":"S","dm":"N0","q":"N","st":"S","co":{"t":"map","of":"N"},"tc":{"t":"map","of":"S"},"am":{"t":"arr","of":"S"},"dat":"N","ngung":"B","ql":"B","hh":"S","hm":"S","lo":{"t":"arr","of":{"t":"obj","req":["c","q"],"f":{"c":"S","s":"S","h":"S","n":"S","q":"N","tt":"S","tu":"N"}}},"cl":{"t":"map","of":"N"},"hc":{"t":"map","of":"S"},"nhap":"N","xuat":"N","x":"S","qc":"S","tb":"N","bd":{"t":"arr","of":{"t":"obj","req":["d","q","s"],"f":{"d":"S","q":"N","s":"N","k":"S","c":"S","dg":"S","o":"S"}}},"g":{"t":"obj","req":["v"],"f":{"v":"N","nguon":"S","nt":"S"}}}}},"hd":{"t":"arr","of":{"t":"obj","req":["so","ls","w"],"f":{"so":"S","cty":"S","ncc":"S","nt":"S","ky":"S","han":"S","tt":"S","hang":"S","qua":"B","xong":"S","eta":"S","sl":"N","nhan":"N","w":{"t":"arr","of":{"t":"arr","of":"S"}},"ls":{"t":"arr","of":{"t":"obj","f":{"t":"S","q":"N","u":"S","st":"S","etd":"S","eta":"S","ve":"S","qua":"B","g":"N"}}},"ac":"N","da":"N","con":"N"}}},"po":{"t":"arr","of":{"t":"obj","req":["so","ls"],"f":{"so":"S","ngay":"S","mua":"S","ncc":"S","nt":"S","n":"N","xuat":"N","ls":{"t":"arr","of":{"t":"obj","f":{"t":"S","q":"N","g":"N"}}},"tong":"N"}}}}}/*END*/;
 function chkV(v,s,p){
   if(typeof s==='string'){
     if(s==='S')return typeof v==='string'?'':p;
@@ -501,6 +503,13 @@ function itemHtml(r,q,st,hanTruoc){
   var g=r.g?'<span class="pill info" title="'+esc(r.g.nguon||'')+'">'+(r.g.nt?nf(r.g.v)+' '+esc(r.g.nt):NF0.format(r.g.v)+' đ')+'</span>':'';
   var all=S.co==='all',chua=clIn(r);
   var lo=vis.length?'<details><summary>'+vis.length+' lô'+(chua?' · '+nf(chua)+' '+esc(r.u)+' chưa khai lô':'')+'</summary><div class="tbw"><table class="tb"><thead><tr><th>Số lô</th>'+(all?'<th>Công ty</th>':'')+'<th>Hạn dùng</th><th class="r">Tồn</th></tr></thead><tbody>'+vis.map(function(l){return '<tr><td>'+esc(l.s||'(không số)')+'</td>'+(all?'<td>'+esc(coName(l.c))+'</td>':'')+'<td>'+(l.h?fdate(l.h):'—')+(l.tu===1?' <span class="pill info" title="Hạn do phần mềm tự tính từ tháng nhập + 1 năm, không phải hạn ghi trên bao bì">tự tính</span>':l.tu===2?' <span class="pill info" title="Lô gộp từ nhiều lần nhập: một phần có hạn do phần mềm tự tính, phần còn lại nhập tay hoặc chưa rõ nguồn">một phần tự tính</span>':'')+(l.tt==='het'?' <span class="pill bad">Hết hạn</span>':l.tt==='sap'?' <span class="pill warn">Sắp hết</span>':'')+'</td><td class="r">'+nf(l.q)+'</td></tr>';}).join('')+'</tbody></table></div></details>':(chua?'<span class="sub">'+nf(chua)+' '+esc(r.u)+' chưa khai lô</span>':'');
+  /* DX-147: nhập / xuất gần đây của mặt hàng (mới nhất ở trên), tồn sau từng dòng, giống Thẻ kho ở Sổ; nút báo lệch mở sẵn thẻ Gửi › Ghi chú cho mặt hàng này */
+  var bd='';
+  if(r.bd&&r.bd.length){
+    bd='<details><summary>Nhập xuất gần đây ('+r.bd.length+' lần'+(all?'':', mọi công ty')+')</summary><div class="tbw"><table class="tb bd"><thead><tr><th>Ngày</th><th>Chứng từ · đối tác</th><th class="r">SL</th><th class="r">Tồn</th></tr></thead><tbody>'+
+      r.bd.slice().reverse().map(function(b){var dc=b.k==='DC';return '<tr'+(dc?' class="dc"':'')+'><td>'+fdate(b.d).slice(0,5)+'</td><td class="g">'+(b.c?'<b>'+esc(b.c)+'</b> ':'')+esc(b.dg||(dc?'Điều chỉnh':b.q>0?'Nhập':'Xuất'))+(b.o?' · '+esc(b.o):'')+'</td><td class="r '+(b.q>0?'n':'x')+'">'+(b.q>0?'+':'−')+nf(Math.abs(b.q))+'</td><td class="r"><b>'+nf(b.s)+'</b></td></tr>';}).join('')+
+      '</tbody></table></div><button type="button" class="bao" data-bao="'+esc(r.m)+'">Thấy sai? Báo về Sổ</button></details>';
+  }
   var ex=[];if(r.dat>0&&!r.ngung)ex.push('Nên đặt thêm <b>'+nf(r.dat)+'</b> '+esc(r.u));if(r.dm)ex.push('Định mức '+nf(r.dm));if(r.nhap)ex.push('Nhập tháng này '+nf(r.nhap));if(r.xuat)ex.push('Xuất tháng này '+nf(r.xuat));
   /* thứ tự đọc theo yêu cầu: tên hàng, tên hàng xuất, quy cách sản phẩm, TB xuất hàng tháng, tồn kho hiện tại kèm đơn vị tính. Trái: tên đậm, dòng phụ nhạt; phải: số đậm, một tình trạng. Mã / quy cách đã nằm trong tên thì không lặp */
   var tb=r.tb>0?nf(Math.round(r.tb*100)/100):'–',u=esc(r.u);
@@ -518,7 +527,7 @@ function itemHtml(r,q,st,hanTruoc){
     '<div class="m1"><small>TB/tháng'+(all?'':' (mọi công ty)')+'</small> <b>'+tb+'</b></div></div>'+(sw?'<span class="sw '+swc+'">'+sw+'</span>':'')+
     '<div class="m2"><small>Tồn kho hiện tại</small><b>'+nf(q)+'</b>'+(u?'<i>'+u+'</i>':'')+'</div></summary>'+
     '<div class="ct">'+(am||han||g||r.ngung?'<div class="tags">'+(r.ngung&&st!=='Âm kho'?'<span class="pill">Ngừng đề xuất</span>':'')+am+han+g+'</div>':'')+ghiAm+
-    (per?'<span class="sub">'+per+'</span>':'')+(ex.length?'<span class="sub">'+ex.join(' · ')+'</span>':'')+lo+'</div></details></li>';
+    (per?'<span class="sub">'+per+'</span>':'')+(ex.length?'<span class="sub">'+ex.join(' · ')+'</span>':'')+lo+bd+'</div></details></li>';
 }
 function vHd(d){
   var qs=S.q.trim().toLowerCase();
@@ -926,6 +935,13 @@ function guiBam(e){
 /* ---- sự kiện ---- */
 document.addEventListener('click',function(e){
   if(guiBam(e)||ttBam(e))return;
+  var bao=e.target.closest&&e.target.closest('[data-bao]');
+  if(bao){      // DX-147: báo lệch tồn từ thẻ hàng → thẻ Gửi › Ghi chú điền sẵn mặt hàng và số Sổ đang ghi
+    var hr=hangTim(bao.dataset.bao);
+    G.loai='ghichu';G.kq='';G.loi='';G.id='';G.m=bao.dataset.bao;G.td='Kiểm tra tồn: '+(hr?hr.t:bao.dataset.bao);
+    G.nd=hr?('Sổ đang ghi '+nf(hr.q)+' '+(hr.u||'')+'. Thực tế: '):'';
+    S.tab='gui';S.f='';S.q='';HANG.k='';draw();guiVe();window.scrollTo(0,0);return;
+  }
   var t=e.target.closest('[data-tab],[data-co],[data-f],[data-go]');
   if(!t)return;
   if(t.dataset.tab){S.tab=t.dataset.tab;S.f='';S.q='';}
